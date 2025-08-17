@@ -1,43 +1,15 @@
-name: Build and Deploy Go App
+name: Deploy Go App
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout the repo
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    # 2. Setup Go
-    - name: Setup Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.22'
-
-    # 3. Build the Go app
-    - name: Build Go app
-      run: go build -o myapp.exe .
-
-    # 4. Copy the built app and templates to the Windows server
-    - name: Copy app and templates to server
-      uses: appleboy/scp-action@v0.1.5
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.DEPLOY_KEY }}
-        port: 22
-        source: |
-          myapp.exe
-          templates/**
-        target: C:\\apps
-
-    # 5. Restart the app on Windows server
-    - name: Restart app on Windows server
+    - name: Deploy over SSH
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -45,6 +17,25 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         port: 22
         script: |
-          if not exist C:\apps mkdir C:\apps
+          $repoPath = "C:\Users\benme\Documents\PersonalWebsiteGO"
+
+          # If the folder doesn't exist, clone the repo
+          if (!(Test-Path $repoPath)) {
+              git clone https://github.com/${{ github.repository }} $repoPath
+          }
+
+          # Otherwise, pull the latest changes
+          cd $repoPath
+          git reset --hard
+          git clean -fd
+          git pull origin main
+
+          # Stop the old app if running
           taskkill /IM myapp.exe /F || echo "Not running"
-          start C:\apps\myapp.exe
+
+          # Build the Go app on the server
+          cd $repoPath
+          go build -o myapp.exe .
+
+          # Start the app
+          start $repoPath\myapp.exe
