@@ -1,0 +1,26 @@
+.hover-raise {
+    transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+    filter: brightness(1);
+}
+
+.hover-raise:hover {
+    transform: translateY(-10px);
+}
+
+.container-fluid:hover .hover-raise {
+    filter: brightness(0.7);
+}
+
+.container-fluid .hover-raise:hover {
+    filter: brightness(1);
+}
+
+body {
+    height: 100vh;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
