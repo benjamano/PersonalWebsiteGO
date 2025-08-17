@@ -21,6 +21,8 @@ jobs:
               git clone https://github.com/benjamano/PersonalWebsiteGO "C:\Users\benme\Documents\PersonalWebsiteGO"
           )
 
+          set PATH=C:\Program Files\Git\cmd;C:\Go\bin;%PATH%
+
           cd "C:\Users\benme\Documents\PersonalWebsiteGO"
           git reset --hard
           git clean -fd
@@ -28,7 +30,6 @@ jobs:
 
           taskkill /IM myapp.exe /F || echo Not running
 
-          set PATH=C:\Go\bin;%PATH%
           go build -o myapp.exe .
 
           start "" "C:\Users\benme\Documents\PersonalWebsiteGO\myapp.exe"
