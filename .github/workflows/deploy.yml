@@ -27,5 +27,8 @@ jobs:
           git pull origin main
 
           taskkill /IM myapp.exe /F || echo Not running
+
+          set PATH=C:\Go\bin;%PATH%
           go build -o myapp.exe .
+
           start "" "C:\Users\benme\Documents\PersonalWebsiteGO\myapp.exe"
