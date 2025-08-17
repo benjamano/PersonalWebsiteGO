@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-..." crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/9d35a24d36.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/static/css/site.css" id="stylesheet">
@@ -22,9 +23,18 @@
                 <li class="nav-item">
                     <a class="nav-link link-body-emphasis px-2" href="/">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link link-body-emphasis px-2" href="/Projects">Projects</a>
-                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Projects
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Websites</a></li>
+                      <li><a class="dropdown-item" href="#">Laser Tag Arena</a></li>
+                      <li><a class="dropdown-item" href="#">Social Media</a></li>
+                      <li><a class="dropdown-item" href="#">Software Development</a></li>
+                    </ul>
+                  </li>
+                </ul>
             </ul>
         </div>
       </nav>
@@ -37,9 +47,9 @@
         <div class="col-md-4 d-flex align-items-center">
             <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Ben Mercer</span>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <span class="text-body-secondary">
-                Rendered in {{.RenderTime}} seconds via GoLang
+                Rendered in {{.RenderTime}} seconds via GoLang running on my home server
             </span>
         </div>
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
