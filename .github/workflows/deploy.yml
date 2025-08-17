@@ -5,33 +5,11 @@ on:
     branches: [ main ]
 
 jobs:
-  build-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
-
-    - name: Setup Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.22'
-
-    - name: Build Windows executable
-      run: |
-        GOOS=windows GOARCH=amd64 go build -o myapp.exe .
-
-    - name: Upload myapp.exe to server
-      uses: appleboy/scp-action@v0.1.5
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.DEPLOY_KEY }}
-        port: 22
-        source: "myapp.exe"
-        target: "C:/apps/"
-
-    - name: Start app on server
+    - name: Deploy over SSH
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -39,6 +17,26 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         port: 22
         script: |
-          echo "Deploying..."
+          echo "Deploying Go App..."
+          
+          # Define repo folder on server
+          REPO_DIR=C:\apps\myapp_repo
+          
+          # If folder exists, pull latest; else clone fresh
+          if (Test-Path $REPO_DIR) {
+            cd $REPO_DIR
+            git reset --hard
+            git clean -fd
+            git pull
+          } else {
+            git clone https://github.com/${{ github.repository }} $REPO_DIR
+            cd $REPO_DIR
+          }
+
+          # Build the app
+          go build -o myapp.exe .
+
+          # Stop old app and start new
           taskkill /IM myapp.exe /F || echo "Not running"
-          start C:\apps\myapp.exe
+          Start-Process -FilePath "$REPO_DIR\myapp.exe"
+          echo "Deployment complete."
