@@ -17,25 +17,15 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         port: 22
         script: |
-          $repoPath = "C:\Users\benme\Documents\PersonalWebsiteGO"
+          if not exist "C:\Users\benme\Documents\PersonalWebsiteGO" (
+              git clone https://github.com/benjamano/PersonalWebsiteGO "C:\Users\benme\Documents\PersonalWebsiteGO"
+          )
 
-          # If the folder doesn't exist, clone the repo
-          if (!(Test-Path $repoPath)) {
-              git clone https://github.com/${{ github.repository }} $repoPath
-          }
-
-          # Otherwise, pull the latest changes
-          cd $repoPath
+          cd "C:\Users\benme\Documents\PersonalWebsiteGO"
           git reset --hard
           git clean -fd
           git pull origin main
 
-          # Stop the old app if running
-          taskkill /IM myapp.exe /F || echo "Not running"
-
-          # Build the Go app on the server
-          cd $repoPath
+          taskkill /IM myapp.exe /F || echo Not running
           go build -o myapp.exe .
-
-          # Start the app
-          start $repoPath\myapp.exe
+          start "" "C:\Users\benme\Documents\PersonalWebsiteGO\myapp.exe"
