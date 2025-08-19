@@ -26,17 +26,17 @@ func main() {
     })
 
     app.Static("/static", "./static")
-	
-	app.Get("/", func(c *fiber.Ctx) error {
-		return renderWithTime(c, "index", fiber.Map{"Title": "Home"}, "layout/base")
-	})
+
+    app.Get("/", func(c *fiber.Ctx) error {
+        return renderWithTime(c, "index", fiber.Map{"Title": "Home"}, "layout/base")
+    })
 
     app.Get("/about", func(c *fiber.Ctx) error {
         return c.Render("about", fiber.Map{
-            "Title": "About",
-			"RenderTime": c.Locals("RenderTime"),
+            "Title":      "About",
+            "RenderTime": c.Locals("RenderTime"),
         }, "layout")
     })
 
-    app.Listen(":3000")
+    app.Listen("0.0.0.0:3000")
 }
