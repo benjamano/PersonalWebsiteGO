@@ -29,12 +29,13 @@ jobs:
         port: 2222
         script: |
           GO_VERSION="1.23.6"
-          wget https://golang.org/dl/go${GO_VERSION}.linux-armv7l.tar.gz -O /tmp/go.tar.gz
+          wget https://go.dev/dl/go${GO_VERSION}.linux-armv6l.tar.gz -O /tmp/go.tar.gz
+          sudo rm -rf /usr/local/go
           sudo tar -C /usr/local -xzf /tmp/go.tar.gz
           rm /tmp/go.tar.gz
           echo "Go installed"
           /usr/local/go/bin/go version
-
+          
     - name: SSH Clone or update repo
       uses: appleboy/ssh-action@v1.0.3
       with:
