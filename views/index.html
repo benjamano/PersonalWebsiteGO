@@ -1,39 +1,38 @@
-{{define "content"}}
-    <div class="container-fluid px-3 py-4 me-auto ms-auto">
-        <!-- <h2 class="pb-2 mb-4 border-bottom width-auto">My Projects</h2> -->
-        <div class="row row-gap-4 mb-4">
-            <div class="col">
-                <div role="button" class="card card-cover rounded-4 pt-5 hover-raise" style="background-image: url('/static/images/hotbeanspreview.png')">
-                    <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                        <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-black">Portfolio Websites</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div role="button" class="card card-cover rounded-4 pt-5 hover-raise" style="background-image: url('/static/images/LaserTagPrev.png')">
-                    <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                        <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Laser Tag Arena Upgrades</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div role="button" class="card card-cover rounded-4 pt-5 hover-raise" style="background-image: url('/static/images/SocialMediaPreview.png')">
-                    <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                        <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Social Media Managment</h3>
-                    </div>
+<div class="container-fluid px-3 py-4 pt-2 me-auto ms-auto text-center">
+    <h1><u>Ben Mercer</u></h1>
+
+    <!-- <h2 class="pb-2 mb-4 border-bottom width-auto">My Projects</h2> -->
+    <div class="row row-gap-4 mb-4 mt-4">
+        <div class="col" onclick="location.href='/projects/portfolio'">
+            <div role="button" class="card card-cover rounded-4 pt-5 hover-raise" style="background-image: url('/static/images/hotbeanspreview.png')">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-black">Portfolio Websites</h3>
                 </div>
             </div>
         </div>
-        <div class="col-12">
-            <div role="button" class="card card-cover rounded-4 pt-5 hover-raise" style=" background-image: url('/static/images/codingPreview.png')">
-                <!-- background-image: url('https://github-readme-stats.vercel.app/api/top-langs/?username=benjamano&langs_count=8&layout=donut') -->
-                <div class="pt-5 mt-5">
-                    <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                        <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Software Development</h3>
-                    </div>
+        <div class="col" onclick="location.href='/projects/lasertag'">
+            <div role="button" class="card card-cover rounded-4 pt-5 hover-raise" style="background-image: url('/static/images/LaserTagPrev.png')">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Laser Tag Arena Upgrades</h3>
                 </div>
             </div>
         </div>
-        <!-- <img src="" alt="Top Languages" /> -->
+        <div class="col" onclick="location.href='/projects/socialmedia'">
+            <div role="button" class="card card-cover rounded-4 pt-5 hover-raise" style="background-image: url('/static/images/SocialMediaPreview.png')">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Social Media Managment</h3>
+                </div>
+            </div>
+        </div>
     </div>
-{{end}}
+    <div class="col-12" onclick="location.href='/projects/software'">
+        <div role="button" class="card card-cover rounded-4 pt-5 hover-raise" style=" background-image: url('/static/images/codingPreview.png')">
+            <!-- background-image: url('https://github-readme-stats.vercel.app/api/top-langs/?username=benjamano&langs_count=8&layout=donut') -->
+            <div class="pt-5 mt-5">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Software Development</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
