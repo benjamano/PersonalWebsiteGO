@@ -6,9 +6,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
-
-	"github.com/valyala/fasthttp"
-	"github.com/valyala/fasthttp/reverseproxy"
 )
 
 func renderWithTime(c *fiber.Ctx, view string, data fiber.Map, layout string) error {
@@ -53,16 +50,6 @@ func main() {
 
 	app.Get("/projects/software", func(c *fiber.Ctx) error {
 		return renderWithTime(c, "projects/software", fiber.Map{"Title": "Software Development"}, "layout/base")
-	})
-
-	octoprintProxy := reverseproxy.NewReverseProxy("192.168.1.87")
-
-	app.All("/octoprint/*", func(c *fiber.Ctx) error {
-		// Strip the "/octoprint" prefix before forwarding
-		newPath := c.OriginalURL()[len("/octoprint"):]
-		c.Path(newPath)
-		octoprintProxy.ServeHTTP(c.Context())
-		return nil
 	})
 
 	fmt.Println("Server starting on http://localhost:3000")
