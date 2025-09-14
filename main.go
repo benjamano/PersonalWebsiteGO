@@ -48,6 +48,10 @@ func main() {
 		return renderWithTime(c, "projects/socialmedia", fiber.Map{"Title": "Social Media"}, "layout/base")
 	})
 
+	app.Get("/projects/websites", func(c *fiber.Ctx) error {
+		return renderWithTime(c, "projects/websites", fiber.Map{"Title": "Web Development"}, "layout/base")
+	})
+
 	app.Get("/projects/software", func(c *fiber.Ctx) error {
 		return renderWithTime(c, "projects/software", fiber.Map{"Title": "Software Development"}, "layout/base")
 	})
