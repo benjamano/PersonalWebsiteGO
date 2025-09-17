@@ -1,8 +1,11 @@
 const containers = document.querySelectorAll('.beforeAfterContainer');
 
-containers.forEach((container, index) => {
+containers.forEach((container) => {
     const slider = container.querySelector('.slider');
-    const afterImage = container.querySelector('.after');
+    let afterWrapper = container.querySelector('.afterWrapper');
+    if (!afterWrapper){
+        afterWrapper = container.querySelector('.after');
+    }
     let isDragging = false;
     let animationId = null;
 
@@ -10,7 +13,7 @@ containers.forEach((container, index) => {
         if (animationId) {
             cancelAnimationFrame(animationId);
         }
-        
+
         animationId = requestAnimationFrame(() => {
             const containerRect = container.getBoundingClientRect();
             const containerWidth = containerRect.width;
@@ -18,7 +21,7 @@ containers.forEach((container, index) => {
             const percentage = Math.max(0, Math.min(100, (relativeX / containerWidth) * 100));
             
             slider.style.left = percentage + '%';
-            afterImage.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
+            afterWrapper.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
         });
     }
 

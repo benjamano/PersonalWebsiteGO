@@ -43,6 +43,22 @@ hr{
     user-select: none;
 }
 
+
+.beforeAfterContainer img,
+.beforeAfterContainer video,
+.beforeAfterContainer .afterWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.afterWrapper {
+    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+}
+
 @media (max-width: 600px) {
     .beforeAfterContainer {
         width: 90vw;
