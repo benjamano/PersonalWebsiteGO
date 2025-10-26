@@ -47,11 +47,11 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         port: 2222
         script: |
-          if [ ! -d "/home/benmercer/PersonalWebsiteGO" ]; then
-              git clone https://github.com/benjamano/PersonalWebsiteGO /home/benmercer/PersonalWebsiteGO
+          if [ ! -d "/home/ben/PersonalWebsiteGO" ]; then
+              git clone https://github.com/benjamano/PersonalWebsiteGO /home/ben/PersonalWebsiteGO
               echo "Repo cloned"
           else
-              cd /home/benmercer/PersonalWebsiteGO
+              cd /home/ben/PersonalWebsiteGO
               git reset --hard
               git clean -fd
               git pull origin main
@@ -68,7 +68,7 @@ jobs:
         port: 2222
         script: |
           export PATH=$HOME/go/go/bin:$PATH
-          cd /home/benmercer/PersonalWebsiteGO
+          cd /home/ben/PersonalWebsiteGO
           go build -o myapp
           chmod +x myapp
           echo "App built"
@@ -89,13 +89,13 @@ jobs:
 
           [Service]
           Type=simple
-          User=benmercer
-          WorkingDirectory=/home/benmercer/PersonalWebsiteGO
-          ExecStart=/home/benmercer/PersonalWebsiteGO/myapp
+          User=ben
+          WorkingDirectory=/home/ben/PersonalWebsiteGO
+          ExecStart=/home/ben/PersonalWebsiteGO/myapp
           Restart=always
           RestartSec=5
-          StandardOutput=append:/home/benmercer/PersonalWebsiteGO/myapp.log
-          StandardError=append:/home/benmercer/PersonalWebsiteGO/myapp.log
+          StandardOutput=append:/home/ben/PersonalWebsiteGO/myapp.log
+          StandardError=append:/home/ben/PersonalWebsiteGO/myapp.log
 
           [Install]
           WantedBy=multi-user.target
