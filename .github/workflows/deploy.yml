@@ -42,7 +42,7 @@ jobs:
         port: 2222
         script: |
           GO_VERSION="1.23.6"
-          wget https://go.dev/dl/go${GO_VERSION}.linux-armv6l.tar.gz -O /tmp/go.tar.gz
+          wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz -O /tmp/go.tar.gz
           sudo tar -C /usr/local -xzf /tmp/go.tar.gz
           rm /tmp/go.tar.gz
           echo "Go installed"
