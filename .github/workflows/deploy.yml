@@ -9,7 +9,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: SSH Remove existing Go
+    # Stop the service first if it exists
+    - name: SSH Stop service
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: 2222
+        script: |
+          sudo systemctl stop myapp || echo "Service not running"
+
+    # Remove old Go installation
+    - name: SSH Remove old Go
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -20,6 +32,7 @@ jobs:
           sudo rm -rf /usr/local/go
           echo "Old Go removed"
 
+    # Install Go
     - name: SSH Install Go
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -30,12 +43,12 @@ jobs:
         script: |
           GO_VERSION="1.23.6"
           wget https://go.dev/dl/go${GO_VERSION}.linux-armv6l.tar.gz -O /tmp/go.tar.gz
-          sudo rm -rf /usr/local/go
           sudo tar -C /usr/local -xzf /tmp/go.tar.gz
           rm /tmp/go.tar.gz
           echo "Go installed"
           /usr/local/go/bin/go version
-          
+
+    # Clone or update repo
     - name: SSH Clone or update repo
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -55,6 +68,21 @@ jobs:
               echo "Repo updated"
           fi
 
+    # Build the Go app
+    - name: SSH Build app
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: 2222
+        script: |
+          cd /home/benmercer/PersonalWebsiteGO
+          /usr/local/go/bin/go build -o myapp
+          chmod +x myapp
+          echo "App built"
+
+    # Create or update systemd service
     - name: SSH Create systemd service
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -81,33 +109,12 @@ jobs:
           [Install]
           WantedBy=multi-user.target
           EOF
-          
+
           sudo systemctl daemon-reload
           sudo systemctl enable myapp
           echo "Service created and enabled"
 
-    - name: SSH Stop service
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
-        script: |
-          sudo systemctl stop myapp || echo "Service not running"
-
-    - name: SSH Build app
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
-        script: |
-          cd /home/benmercer/PersonalWebsiteGO
-          /usr/local/go/bin/go build -o myapp
-          echo "App built"
-
+    # Start/restart the service
     - name: SSH Restart service
       uses: appleboy/ssh-action@v1.0.3
       with:
