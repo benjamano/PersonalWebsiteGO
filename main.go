@@ -1,11 +1,16 @@
 package main
 
 import (
+	"PersonalWebsiteGO/config"
+	"PersonalWebsiteGO/handlers"
+	"PersonalWebsiteGO/middleware"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
+	"github.com/joho/godotenv"
 )
 
 func renderWithTime(c *fiber.Ctx, view string, data fiber.Map, layout string) error {
@@ -24,11 +29,24 @@ func renderWithTime(c *fiber.Ctx, view string, data fiber.Map, layout string) er
 }
 
 func main() {
+	// Load environment variables
+	if err := godotenv.Load(); err != nil {
+		log.Println("Warning: .env file not found, using system environment variables")
+	}
+
+	// Initialize database
+	if err := config.InitDatabase(); err != nil {
+		log.Fatal("Failed to initialize database:", err)
+	}
+	defer config.CloseDatabase()
+
 	engine := html.New("./views", ".html")
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
+
+	engine.Reload(true)
 
 	app.Static("/static", "./static")
 
@@ -55,6 +73,22 @@ func main() {
 	app.Get("/projects/software", func(c *fiber.Ctx) error {
 		return renderWithTime(c, "projects/software", fiber.Map{"Title": "Software Development"}, "layout/base")
 	})
+
+	// Blog routes
+	app.Get("/projects/blogs", handlers.RenderBlogsPage)
+
+	// Authentication routes
+	app.Post("/api/auth/login", handlers.Login)
+	app.Get("/api/auth/check", middleware.AuthMiddleware, handlers.CheckAuth)
+
+	// Public API routes (read-only)
+	app.Get("/api/blogs", handlers.GetAllBlogs)
+	app.Get("/api/blogs/:id", handlers.GetBlogByID)
+
+	// Protected API routes (require authentication)
+	app.Post("/api/blogs", middleware.AuthMiddleware, handlers.CreateBlog)
+	app.Put("/api/blogs/:id", middleware.AuthMiddleware, handlers.UpdateBlog)
+	app.Delete("/api/blogs/:id", middleware.AuthMiddleware, handlers.DeleteBlog)
 
 	fmt.Println("Server starting on http://localhost:3000")
 

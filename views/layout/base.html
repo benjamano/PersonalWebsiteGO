@@ -19,9 +19,40 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand pt-0 border-bottom fs-5">
-        <div class="container-fluid text-center mx-auto px-3">
-            <ul class="navbar-nav me-auto ms-auto">
+    <!-- Bootstrap Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Admin Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="loginUsername" name="username" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" name="password" required>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand pt-0 border-bottom fs-5 position-relative" style="min-height:56px;">
+        <div class="container-fluid px-3">
+            <ul class="navbar-nav mx-auto" style="position:relative; z-index:1;">
                 <li class="nav-item">
                     <a class="nav-link link-body-emphasis px-2" href="/">Home</a>
                 </li>
@@ -35,11 +66,18 @@
                       <li><a class="dropdown-item" href="/projects/socialmedia">Social Media</a></li>
                       <li><a class="dropdown-item" href="/projects/blogs">Project Blogs</a></li>
                     </ul>
-                  </li>
-                </ul>
+                </li>
             </ul>
+            <div id="authButtons" style="position:absolute; right:24px; top:8px; z-index:2;">
+                <button id="headerLoginBtn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </button>
+                <button id="headerLogoutBtn" class="btn btn-sm btn-outline-danger d-none" onclick="handleLogout()">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
         </div>
-      </nav>
+    </nav>
 
     <main>
         {{embed}}
@@ -50,9 +88,11 @@
             <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Ben Mercer</span>
         </div>
         <div class="col-md-4 text-center">
+            {{if .RenderTime}}
             <span class="text-body-secondary">
                 Rendered in {{.RenderTime}} seconds via GoLang running on my home server
             </span>
+            {{end}}
         </div>
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
             <li class="ms-3">
@@ -66,6 +106,107 @@
             </li> 
         </ul> 
     </footer>
+
+    <script>
+        // Global authentication state and functions
+        let authToken = localStorage.getItem('authToken');
+        let loginModal;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const loginModalElement = document.getElementById('loginModal');
+            if (loginModalElement) {
+                loginModal = new bootstrap.Modal(loginModalElement);
+            }
+            updateAuthUI();
+        });
+
+        function updateAuthUI() {
+            const headerLoginBtn = document.getElementById('headerLoginBtn');
+            const headerLogoutBtn = document.getElementById('headerLogoutBtn');
+            
+            if (!authToken) {
+                if (headerLoginBtn) headerLoginBtn.classList.remove('d-none');
+                if (headerLogoutBtn) headerLogoutBtn.classList.add('d-none');
+            } else {
+                // Check if token is valid
+                fetch('/api/auth/check', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        if (headerLoginBtn) headerLoginBtn.classList.add('d-none');
+                        if (headerLogoutBtn) headerLogoutBtn.classList.remove('d-none');
+                    } else {
+                        localStorage.removeItem('authToken');
+                        authToken = null;
+                        if (headerLoginBtn) headerLoginBtn.classList.remove('d-none');
+                        if (headerLogoutBtn) headerLogoutBtn.classList.add('d-none');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking auth:', error);
+                    localStorage.removeItem('authToken');
+                    authToken = null;
+                    if (headerLoginBtn) headerLoginBtn.classList.remove('d-none');
+                    if (headerLogoutBtn) headerLogoutBtn.classList.add('d-none');
+                });
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store the token
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    
+                    // Close modal
+                    if (loginModal) loginModal.hide();
+                    
+                    // Clear form and error
+                    document.getElementById('loginForm').reset();
+                    errorDiv.classList.add('d-none');
+                    errorDiv.textContent = '';
+                    
+                    // Update UI and reload page
+                    window.location.reload();
+                } else {
+                    errorDiv.textContent = data.error || 'Login failed';
+                    errorDiv.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'An error occurred during login';
+                errorDiv.classList.remove('d-none');
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('authToken');
+                authToken = null;
+                window.location.reload();
+            }
+        }
+    </script>
 </body>
 </html>
 {{end}}

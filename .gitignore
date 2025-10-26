@@ -1,6 +1,10 @@
 # Environment variables
 .env
 
+# Database files
+blogs.db
+*.db
+
 # Go build artifacts
 *.exe
 *.exe~
