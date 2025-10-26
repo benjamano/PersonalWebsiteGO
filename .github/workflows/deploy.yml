@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest   # keep a GitHub Linux runner
+    runs-on: ubuntu-latest
 
     steps:
     - name: SSH Remove existing Go
@@ -55,7 +55,7 @@ jobs:
               echo "Repo updated"
           fi
 
-    - name: SSH Stop existing app
+    - name: SSH Create systemd service
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -63,7 +63,38 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         port: 2222
         script: |
-          pkill myapp || echo "No running process to stop"
+          sudo tee /etc/systemd/system/myapp.service > /dev/null <<EOF
+          [Unit]
+          Description=Personal Website Go App
+          After=network.target
+
+          [Service]
+          Type=simple
+          User=benmercer
+          WorkingDirectory=/home/benmercer/PersonalWebsiteGO
+          ExecStart=/home/benmercer/PersonalWebsiteGO/myapp
+          Restart=always
+          RestartSec=5
+          StandardOutput=append:/home/benmercer/PersonalWebsiteGO/myapp.log
+          StandardError=append:/home/benmercer/PersonalWebsiteGO/myapp.log
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+          sudo systemctl daemon-reload
+          sudo systemctl enable myapp
+          echo "Service created and enabled"
+
+    - name: SSH Stop service
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: 2222
+        script: |
+          sudo systemctl stop myapp || echo "Service not running"
 
     - name: SSH Build app
       uses: appleboy/ssh-action@v1.0.3
@@ -77,7 +108,7 @@ jobs:
           /usr/local/go/bin/go build -o myapp
           echo "App built"
 
-    - name: SSH Start app
+    - name: SSH Restart service
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -85,6 +116,6 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         port: 2222
         script: |
-          cd /home/benmercer/PersonalWebsiteGO
-          nohup ./myapp > myapp.log 2>&1 &
-          echo "App started"
+          sudo systemctl restart myapp
+          sudo systemctl status myapp
+          echo "Service restarted"
