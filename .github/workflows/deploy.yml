@@ -20,20 +20,8 @@ jobs:
         script: |
           sudo systemctl stop myapp || echo "Service not running"
 
-    # Remove old Go installation
-    - name: SSH Remove old Go
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
-        script: |
-          sudo rm -rf /usr/local/go
-          echo "Old Go removed"
-
-    # Install Go
-    - name: SSH Install Go
+    # Install Go locally for the user (no sudo required)
+    - name: SSH Install Go (user-local)
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -42,11 +30,13 @@ jobs:
         port: 2222
         script: |
           GO_VERSION="1.23.6"
+          mkdir -p ~/go
           wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz -O /tmp/go.tar.gz
-          sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+          rm -rf ~/go/go
+          tar -C ~/go -xzf /tmp/go.tar.gz
           rm /tmp/go.tar.gz
-          echo "Go installed"
-          /usr/local/go/bin/go version
+          export PATH=$HOME/go/go/bin:$PATH
+          go version
 
     # Clone or update repo
     - name: SSH Clone or update repo
@@ -68,7 +58,7 @@ jobs:
               echo "Repo updated"
           fi
 
-    # Build the Go app
+    # Build the Go app using user-local Go
     - name: SSH Build app
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -77,8 +67,9 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         port: 2222
         script: |
+          export PATH=$HOME/go/go/bin:$PATH
           cd /home/benmercer/PersonalWebsiteGO
-          /usr/local/go/bin/go build -o myapp
+          go build -o myapp
           chmod +x myapp
           echo "App built"
 
