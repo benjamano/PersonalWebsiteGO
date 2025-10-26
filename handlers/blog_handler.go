@@ -4,8 +4,8 @@ import (
 	"PersonalWebsiteGO/config"
 	"PersonalWebsiteGO/models"
 	"fmt"
-	"time"
 	"html/template"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
