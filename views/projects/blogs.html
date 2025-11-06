@@ -166,6 +166,31 @@
             },
             placeholder: 'Write your blog content here...'
         });
+
+            // --- Autosave Draft Logic ---
+            // Restore draft if present
+            const draft = localStorage.getItem('blogDraft');
+            if (draft) {
+                try {
+                    const data = JSON.parse(draft);
+                    document.getElementById('title').value = data.title || '';
+                    document.getElementById('author').value = data.author || '';
+                    quill.clipboard.dangerouslyPasteHTML(data.content || '');
+                } catch {}
+            }
+
+            // Save draft on input/change
+            document.getElementById('title').addEventListener('input', saveDraft);
+            document.getElementById('author').addEventListener('input', saveDraft);
+            quill.on('text-change', saveDraft);
+            function saveDraft() {
+                const draftData = {
+                    title: document.getElementById('title').value,
+                    author: document.getElementById('author').value,
+                    content: quill.root.innerHTML,
+                };
+                localStorage.setItem('blogDraft', JSON.stringify(draftData));
+            }
     }
     
     function syncToHtmlSource() {
@@ -248,6 +273,9 @@
         document.getElementById('author').value = '';
         document.getElementById('blogId').value = '';
         document.getElementById('formTitle').textContent = 'Create New Blog Post';
+
+        // Clear draft from localStorage
+        localStorage.removeItem('blogDraft');
     }
     
     async function submitBlog(event) {
@@ -284,6 +312,8 @@
             
             if (response.ok) {
                 alert(isEditing ? 'Blog post updated successfully!' : 'Blog post created successfully!');
+                    // Clear draft after successful post
+                    localStorage.removeItem('blogDraft');
                 window.location.reload();
             } else if (response.status === 401) {
                 alert('Your session has expired. Please login again.');
@@ -319,7 +349,7 @@
                 document.getElementById('formTitle').textContent = 'Edit Blog Post';
                 
                 // Set content in Quill editor
-                quill.root.innerHTML = blog.content;
+                quill.clipboard.dangerouslyPasteHTML(blog.content);
                 
                 // Show the form
                 const form = document.getElementById('blogForm');
