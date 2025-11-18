@@ -31,6 +31,14 @@ func InitDatabase() error {
 		author TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
+	
+	CREATE TABLE IF NOT EXISTS userPlaytime (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		user_name TEXT NOT NULL,
+		date DATE NOT NULL DEFAULT CURRENT_DATE,
+		last_login DATETIME,
+		playtime INTEGER NOT NULL
 	);`
 
 	_, err = DB.Exec(createTableSQL)

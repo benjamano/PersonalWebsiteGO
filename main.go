@@ -90,6 +90,10 @@ func main() {
 	app.Put("/api/blogs/:id", middleware.AuthMiddleware, handlers.UpdateBlog)
 	app.Delete("/api/blogs/:id", middleware.AuthMiddleware, handlers.DeleteBlog)
 
+	app.Get("/api/minecraft/status", handlers.Status)
+	app.Get("/api/minecraft/playerlist", handlers.PlayerList)
+	app.Get("/api/minecraft/sendmessage", handlers.SendMessage)
+
 	fmt.Println("Server starting on http://localhost:3000")
 
 	app.Listen("0.0.0.0:3000")
