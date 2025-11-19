@@ -16,7 +16,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
+        port: 22
         script: |
           sudo systemctl stop myapp || echo "Service not running"
 
@@ -27,7 +27,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
+        port: 22
         script: |
           GO_VERSION="1.23.6"
           mkdir -p ~/go
@@ -45,7 +45,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
+        port: 22
         script: |
           if [ ! -d "/home/ben/PersonalWebsiteGO" ]; then
               git clone https://github.com/benjamano/PersonalWebsiteGO /home/ben/PersonalWebsiteGO
@@ -65,7 +65,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
+        port: 22
         script: |
           export PATH=$HOME/go/go/bin:$PATH
           cd /home/ben/PersonalWebsiteGO
@@ -80,7 +80,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
+        port: 22
         script: |
           sudo tee /etc/systemd/system/myapp.service > /dev/null <<EOF
           [Unit]
@@ -112,7 +112,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.DEPLOY_KEY }}
-        port: 2222
+        port: 22
         script: |
           sudo systemctl restart myapp
           sudo systemctl status myapp
