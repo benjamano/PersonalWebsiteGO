@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/james4k/rcon"
+	"PersonalWebsiteGO/config"
 )
 
 func GetRCONClient() *rcon.RemoteConsole {
@@ -56,25 +57,10 @@ func Status(c *fiber.Ctx) error {
 }
 
 func PlayerList(c *fiber.Ctx) error {
-	rconClient := GetRCONClient()
-	if rconClient == nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Failed to connect to RCON"})
-	}
-	defer rconClient.Close()
-
-	_, err := rconClient.Write("list")
+	playerList, err := GetPlayerList()
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
-
-	listResponse, _, err := rconClient.Read()
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	listResponse = strings.Split(listResponse, ": ")[1]
-
-	playerList := strings.Split(strings.TrimSpace(listResponse), "\n")
 
 	return c.JSON(fiber.Map{
 		"players": playerList,
@@ -99,4 +85,94 @@ func SendMessage(c *fiber.Ctx) error {
 	}
 
 	return nil
+}
+
+func GetPlayerList() ([]string, error) {
+	rconClient := GetRCONClient()
+	if rconClient == nil {
+		return nil, fmt.Errorf("failed to connect to RCON")
+	}
+	defer rconClient.Close()
+
+	_, err := rconClient.Write("list")
+	if err != nil {
+		return nil, fmt.Errorf("failed to send RCON command: %w", err)
+	}
+
+	listResponse, _, err := rconClient.Read()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read RCON response: %w", err)
+	}
+
+	listResponse = strings.Split(listResponse, ": ")[1]
+
+	playerList := strings.Split(strings.TrimSpace(listResponse), "\n")
+
+	return playerList, nil
+}
+
+func CheckAndUpdatePlaytime(){
+	playerList, err := GetPlayerList()
+	if err != nil {
+		return
+	}
+	
+	for _, player := range playerList {
+		fmt.Printf("Updating playtime for player: %s\n", player)
+
+		rows, err := config.DB.Query("SELECT playtime, id FROM user_playtime WHERE user_name = ? AND date = ?", player, time.Now().Format("02-01-2006"))
+		if err != nil {
+			fmt.Println("Database query error:", err)
+			continue
+		}
+
+		var playtimeMinutes int
+		var id int
+		if rows.Next() {
+			if err := rows.Scan(&playtimeMinutes, &id); err != nil {
+				fmt.Println("Row scan error:", err)
+				rows.Close()
+				continue
+			}
+			rows.Close()
+		} else {
+			playtimeMinutes = 0
+			rows.Close()
+		}
+
+		playtimeMinutes += 10
+		_, err = config.DB.Exec("INSERT INTO user_playtime (user_name, playtime, date, last_login, id) VALUES (?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET playtime = ?, last_login = ?",
+			player, playtimeMinutes, time.Now().Format("02-01-2006"), time.Now(), id, playtimeMinutes, time.Now())
+
+		if err != nil {
+			fmt.Println("Database update error:", err)
+			continue
+		}
+
+		fmt.Printf("Updated playtime for player %s: %d minutes\n", player, playtimeMinutes)
+	}
+}
+
+func GetPlaytime(c *fiber.Ctx) error{
+	date := c.Query("date", time.Now().Format("02-01-2006"))
+
+	rows, err := config.DB.Query("SELECT user_name, playtime FROM user_playtime WHERE date = ?", date)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	defer rows.Close()
+	playtimeData := make(map[string]int)
+
+	for rows.Next() {
+		var userName string
+		var playtime int
+		if err := rows.Scan(&userName, &playtime); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
+		playtimeData[userName] = playtime
+	}
+
+	return c.JSON(fiber.Map{"playtime": playtimeData})
 }

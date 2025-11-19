@@ -4,6 +4,7 @@ import (
 	"PersonalWebsiteGO/config"
 	"PersonalWebsiteGO/handlers"
 	"PersonalWebsiteGO/middleware"
+	"PersonalWebsiteGO/background"
 	"fmt"
 	"log"
 	"time"
@@ -74,14 +75,12 @@ func main() {
 		return renderWithTime(c, "projects/software", fiber.Map{"Title": "Software Development"}, "layout/base")
 	})
 
-	// Blog routes
 	app.Get("/projects/blogs", handlers.RenderBlogsPage)
 
 	// Authentication routes
 	app.Post("/api/auth/login", handlers.Login)
 	app.Get("/api/auth/check", middleware.AuthMiddleware, handlers.CheckAuth)
 
-	// Public API routes (read-only)
 	app.Get("/api/blogs", handlers.GetAllBlogs)
 	app.Get("/api/blogs/:id", handlers.GetBlogByID)
 
@@ -93,8 +92,15 @@ func main() {
 	app.Get("/api/minecraft/status", handlers.Status)
 	app.Get("/api/minecraft/playerlist", handlers.PlayerList)
 	app.Get("/api/minecraft/sendmessage", handlers.SendMessage)
+	app.Get("/api/minecraft/getplaytime", handlers.GetPlaytime)
+
+	app.Get("/api/proxmox/vmstatus", handlers.AllVMStatus)
 
 	fmt.Println("Server starting on http://localhost:3000")
+
+	background.StartPlaytimeChecker()
+
+	fmt.Println("Background playtime checker started.")
 
 	app.Listen("0.0.0.0:3000")
 }

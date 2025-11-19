@@ -12,7 +12,7 @@ var DB *sql.DB
 // InitDatabase initializes the SQLite database
 func InitDatabase() error {
 	var err error
-	DB, err = sql.Open("sqlite", "./blogs.db")
+	DB, err = sql.Open("sqlite", "./website.db")
 	if err != nil {
 		return err
 	}
@@ -22,7 +22,6 @@ func InitDatabase() error {
 		return err
 	}
 
-	// Create blogs table if it doesn't exist
 	createTableSQL := `
 	CREATE TABLE IF NOT EXISTS blogs (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +32,7 @@ func InitDatabase() error {
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 	
-	CREATE TABLE IF NOT EXISTS userPlaytime (
+	CREATE TABLE IF NOT EXISTS user_playtime (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		user_name TEXT NOT NULL,
 		date DATE NOT NULL DEFAULT CURRENT_DATE,
