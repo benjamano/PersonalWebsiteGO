@@ -96,6 +96,7 @@ func main() {
 
 	app.Get("/api/proxmox/vmstatus", handlers.AllVMStatus)
 	app.Get("/api/proxmox/getvmstatus", handlers.GetVMStatus)
+	app.Get("/api/proxmox/getvmdetailedstatus", handlers.GetVMDetailedStatus)
 
 	fmt.Println("Server starting on http://localhost:3000")
 
