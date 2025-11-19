@@ -95,6 +95,7 @@ func main() {
 	app.Get("/api/minecraft/getplaytime", handlers.GetPlaytime)
 
 	app.Get("/api/proxmox/vmstatus", handlers.AllVMStatus)
+	app.Get("/api/proxmox/getvmstatus", handlers.GetVMStatus)
 
 	fmt.Println("Server starting on http://localhost:3000")
 

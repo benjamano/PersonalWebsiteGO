@@ -145,3 +145,36 @@ func AllVMStatus(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{"status_list": statusList})
 }
+
+func GetVMStatus(c *fiber.Ctx) error {
+	client, err := GetProxMoxClient()
+	if err != nil {
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
+	vmId := c.Query("vmid")
+
+	nodes, err := client.ListNodes()
+	if err != nil {
+		fmt.Println("Failed to list nodes:", err)
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to list nodes"})
+	}
+
+	status := "VM not found"
+
+	for _, node := range nodes {
+		vms, err := client.ListVMStatus(node)
+		if err != nil {
+			fmt.Printf("Failed to list VMs for node %s: %v\n", node, err)
+			continue
+		}
+		for _, vm := range vms {
+			if fmt.Sprintf("%v", vm["vmid"]) == vmId {
+				status = fmt.Sprintf("%v", vm["status"])
+				break
+			}
+		}
+	}
+
+	return c.JSON(fiber.Map{"status": status})
+}
