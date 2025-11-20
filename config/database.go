@@ -46,6 +46,13 @@ func InitDatabase() error {
 		old_public_ip_address TEXT,
 		changed_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
+
+	CREATE TABLE IF NOT EXISTS log_message (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		message TEXT NOT NULL,
+		level TEXT NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
 	`
 
 	_, err = DB.Exec(createTableSQL)
@@ -61,5 +68,12 @@ func InitDatabase() error {
 func CloseDatabase() {
 	if DB != nil {
 		DB.Close()
+	}
+}
+
+func LogMessage(level string, message string) {
+	_, err := DB.Exec("INSERT INTO log_message (level, message) VALUES (?, ?)", level, message)
+	if err != nil {
+		log.Println("Error logging message:", err)
 	}
 }

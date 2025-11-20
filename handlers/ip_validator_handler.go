@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"encoding/json"
-	"log"
 	"os"
 	"github.com/gofiber/fiber/v2"
 	"PersonalWebsiteGO/config"
@@ -83,7 +82,7 @@ func ValidatePublicIpWithCloudflare(ip string) (bool, error) {
 	
 	for _, record := range result.Result {
 		if record.Content != ip {
-			log.Printf("DNS record %s has IP %s, expected %s", record.Name, record.Content, ip)
+			config.LogMessage("ERROR", fmt.Sprintf("DNS record %s has IP %s, expected %s", record.Name, record.Content, ip))
 			return false, nil
 		}
 	}
@@ -96,21 +95,21 @@ func UpdatePublicIpOnCloudflare(ip string) error {
 
 	rows, err := config.DB.Query("SELECT new_public_ip_address FROM public_ip_updates ORDER BY changed_at DESC LIMIT 1")
 	if err != nil {
-		log.Println("Error fetching last public IP record:", err)
+		config.LogMessage("ERROR", "Error fetching last public IP record: "+err.Error())
 		return err
 	}
 	defer rows.Close()
 
 	if rows.Next() {
 		if err := rows.Scan(&lastIpRecord.NewPublicIpAddress); err != nil {
-			log.Println("Error scanning last public IP record:", err)
+			config.LogMessage("ERROR", "Error scanning last public IP record: "+err.Error())
 			return err
 		}
 	}
 
 	_, err = config.DB.Exec("INSERT INTO public_ip_updates (new_public_ip_address, old_public_ip_address) VALUES (?, ?)", ip, lastIpRecord.NewPublicIpAddress)
 	if err != nil {
-		log.Println("Error inserting new public IP record:", err)
+		config.LogMessage("ERROR", "Error inserting new public IP record: "+err.Error())
 	}
 
 	apiToken := os.Getenv("CLOUDFLARE_API_TOKEN")
@@ -169,7 +168,7 @@ func UpdatePublicIpOnCloudflare(ip string) error {
 
 			updateReq, err := http.NewRequest("PUT", updateURL, bytes.NewBuffer(jsonBody))
 			if err != nil {
-				log.Printf("Failed to create update request for %s: %v", record.Name, err)
+				config.LogMessage("ERROR", fmt.Sprintf("Failed to create update request for %s: %v", record.Name, err))
 				continue
 			}
 			updateReq.Header.Set("Authorization", "Bearer "+apiToken)
@@ -177,11 +176,11 @@ func UpdatePublicIpOnCloudflare(ip string) error {
 
 			updateResp, err := client.Do(updateReq)
 			if err != nil {
-				log.Printf("Failed to update DNS record %s: %v", record.Name, err)
+				config.LogMessage("ERROR", fmt.Sprintf("Failed to update DNS record %s: %v", record.Name, err))
 				continue
 			}
 			updateResp.Body.Close()
-			log.Printf("Updated DNS record %s to IP %s", record.Name, ip)
+			config.LogMessage("INFO", fmt.Sprintf("Updated DNS record %s to IP %s", record.Name, ip))
 		}
 	}
 
@@ -191,27 +190,27 @@ func UpdatePublicIpOnCloudflare(ip string) error {
 func CheckToUpdatePublicIp() {
 	ip, err := _GetCurrentPublicIp()
 	if err != nil {
-		log.Println("Error fetching current public IP:", err)
+		config.LogMessage("ERROR", "Error fetching current public IP: "+err.Error())
 		return
 	}
 
 	isValid, err := ValidatePublicIpWithCloudflare(ip)
 	if err != nil {
-		log.Println("Error validating public ip with cloudflare:", err)
+		config.LogMessage("ERROR", "Error validating public ip with cloudflare: "+err.Error())
 		return
 	}
 
 	if !isValid {
-		log.Println("Public IP does not match Cloudflare's record, updating...")
+		config.LogMessage("INFO", "Public IP does not match Cloudflare's record, updating...")
 
 		err := UpdatePublicIpOnCloudflare(ip)
 		if err != nil {
-			log.Println("Error updating public IP on Cloudflare:", err)
+			config.LogMessage("ERROR", "Error updating public IP on Cloudflare: "+err.Error())
 			return
 		}
 
-		log.Println("Public IP updated successfully.")
+		config.LogMessage("INFO", "Public IP updated successfully.")
 	} else {
-		log.Println("Public IP is valid and matches Cloudflare's record.")
+		// config.LogMessage("INFO", "Public IP is valid and matches Cloudflare's record.")
 	}
 }

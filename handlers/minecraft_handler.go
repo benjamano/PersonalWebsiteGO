@@ -14,7 +14,7 @@ import (
 func GetRCONClient() *rcon.RemoteConsole {
 	rconClient, err := rcon.Dial(os.Getenv("MINECRAFT_RCON_ADDRESS"), os.Getenv("MINECRAFT_RCON_PASSWORD"))
 	if err != nil {
-		fmt.Println("Error connecting to RCON:", err)
+		config.LogMessage("ERROR", "Error connecting to RCON: "+err.Error())
 		return nil
 	}
 
@@ -114,15 +114,15 @@ func GetPlayerList() ([]string, error) {
 func CheckAndUpdatePlaytime(){
 	playerList, err := GetPlayerList()
 	if err != nil {
+		config.LogMessage("ERROR", "Error getting player list: "+err.Error())
 		return
 	}
-	
 	for _, player := range playerList {
-		fmt.Printf("Updating playtime for player: %s\n", player)
+		config.LogMessage("INFO", fmt.Sprintf("Updating playtime for player: %s", player))
 
 		rows, err := config.DB.Query("SELECT playtime, id FROM user_playtime WHERE user_name = ? AND date = ?", player, time.Now().Format("02-01-2006"))
 		if err != nil {
-			fmt.Println("Database query error:", err)
+			config.LogMessage("ERROR", "Database query error: "+err.Error())
 			continue
 		}
 
@@ -130,7 +130,7 @@ func CheckAndUpdatePlaytime(){
 		var id int
 		if rows.Next() {
 			if err := rows.Scan(&playtimeMinutes, &id); err != nil {
-				fmt.Println("Row scan error:", err)
+				config.LogMessage("ERROR", "Row scan error: "+err.Error())
 				rows.Close()
 				continue
 			}
@@ -145,11 +145,11 @@ func CheckAndUpdatePlaytime(){
 			player, playtimeMinutes, time.Now().Format("02-01-2006"), time.Now(), id, playtimeMinutes, time.Now())
 
 		if err != nil {
-			fmt.Println("Database update error:", err)
+			config.LogMessage("ERROR", "Database update error: "+err.Error())
 			continue
 		}
 
-		fmt.Printf("Updated playtime for player %s: %d minutes\n", player, playtimeMinutes)
+		config.LogMessage("INFO", fmt.Sprintf("Updated playtime for player %s: %d minutes", player, playtimeMinutes))
 	}
 }
 

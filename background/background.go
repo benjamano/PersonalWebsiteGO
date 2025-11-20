@@ -3,7 +3,6 @@ package background
 import (
 	"PersonalWebsiteGO/handlers"
 
-	"fmt"
 	"time"
 )
 
@@ -12,7 +11,7 @@ func StartPlaytimeChecker() {
 		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 		for {
-			fmt.Println("Checking player playtime...")
+			// fmt.Println("Checking player playtime...")
 
 			handlers.CheckAndUpdatePlaytime()
 
@@ -26,7 +25,8 @@ func StartPublicIpValidator() {
 		ticker := time.NewTicker(1 * time.Minute)
 		defer ticker.Stop()
 		for {
-			fmt.Println("Validating public IP address...")
+			// fmt.Println("Validating public IP address...")
+
 			handlers.CheckToUpdatePublicIp()
 			<-ticker.C
 		}
