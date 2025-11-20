@@ -98,11 +98,17 @@ func main() {
 	app.Get("/api/proxmox/getvmstatus", handlers.GetVMStatus)
 	app.Get("/api/proxmox/getvmdetailedstatus", handlers.GetVMDetailedStatus)
 
+	app.Get("/api/ip/currentpublicip", handlers.GetCurrentPublicIp)
+
 	fmt.Println("Server starting on http://localhost:3000")
 
 	background.StartPlaytimeChecker()
 
 	fmt.Println("Background playtime checker started.")
+
+	background.StartPublicIpValidator()
+
+	fmt.Println("Background public IP validator started.")
 
 	app.Listen("0.0.0.0:3000")
 }

@@ -38,7 +38,15 @@ func InitDatabase() error {
 		date DATE NOT NULL DEFAULT CURRENT_DATE,
 		last_login DATETIME,
 		playtime INTEGER NOT NULL
-	);`
+	);
+	
+	CREATE TABLE IF NOT EXISTS public_ip_updates (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		new_public_ip_address TEXT NOT NULL,
+		old_public_ip_address TEXT,
+		changed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
+	`
 
 	_, err = DB.Exec(createTableSQL)
 	if err != nil {

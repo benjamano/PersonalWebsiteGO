@@ -20,3 +20,15 @@ func StartPlaytimeChecker() {
 		}
 	}()
 }
+
+func StartPublicIpValidator() {
+	go func() {
+		ticker := time.NewTicker(1 * time.Minute)
+		defer ticker.Stop()
+		for {
+			fmt.Println("Validating public IP address...")
+			handlers.CheckToUpdatePublicIp()
+			<-ticker.C
+		}
+	}()
+}
