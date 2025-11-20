@@ -47,7 +47,7 @@ func InitDatabase() error {
 		changed_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 
-	CREATE TABLE IF NOT EXISTS log_message (
+	CREATE TABLE IF NOT EXISTS log_messages (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		message TEXT NOT NULL,
 		level TEXT NOT NULL,
@@ -72,7 +72,7 @@ func CloseDatabase() {
 }
 
 func LogMessage(level string, message string) {
-	_, err := DB.Exec("INSERT INTO log_message (level, message) VALUES (?, ?)", level, message)
+	_, err := DB.Exec("INSERT INTO log_messages (level, message) VALUES (?, ?)", level, message)
 	if err != nil {
 		log.Println("Error logging message:", err)
 	}

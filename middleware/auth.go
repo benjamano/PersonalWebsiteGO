@@ -13,14 +13,19 @@ import (
 func AuthMiddleware(c *fiber.Ctx) error {
 	// Get the Authorization header
 	authHeader := c.Get("Authorization")
-	if authHeader == "" {
-		return c.Status(401).JSON(fiber.Map{
-			"error": "No authorization header",
-		})
+	var tokenString string
+	if authHeader != "" {
+		tokenString = strings.Replace(authHeader, "Bearer ", "", 1)
+	} else {
+		// Try to get token from cookie
+		cookieToken := c.Cookies("authToken")
+		if cookieToken == "" {
+			return c.Status(401).JSON(fiber.Map{
+				"error": "No authorization header or cookie",
+			})
+		}
+		tokenString = cookieToken
 	}
-
-	// Extract the token
-	tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
 
 	// Parse and validate the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {

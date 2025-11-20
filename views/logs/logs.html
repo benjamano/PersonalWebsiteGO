@@ -1,3 +1,16 @@
 <div class="container-fluid px-3 py-4 pt-2 me-auto ms-auto text-center">
-    
+    <h2 class="mb-4">System Logs</h2>
+    <div class="card col-6">
+        <div class="card-body text-start">
+            {{if .logs}}
+                {{range .logs}}
+                    <div class="log-entry mb-0 p-0 rounded">
+                        <strong>[{{.CreatedAt}}] [{{.Level}}]</strong> {{.Message}}
+                    </div>
+                {{end}}
+            {{else}}
+                <p>No logs available.</p>
+            {{end}}
+        </div>
+    </div>
 </div>
