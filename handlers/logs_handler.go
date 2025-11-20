@@ -6,7 +6,7 @@ import (
 )
 
 func RenderLogsPage(c *fiber.Ctx) error {
-	rows, err := config.DB.Query("SELECT created_at, level, message FROM log_messages ORDER BY created_at DESC LIMIT 200")
+	rows, err := config.DB.Query("SELECT created_at, level, message FROM log_messages WHERE created_at >= datetime('now', '-48 hours') ORDER BY created_at DESC")
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("Error retrieving logs")
 	}

@@ -1,16 +1,28 @@
-<div class="container-fluid px-3 py-4 pt-2 me-auto ms-auto text-center">
-    <h2 class="mb-4">System Logs</h2>
-    <div class="card col-6">
-        <div class="card-body text-start">
-            {{if .logs}}
-                {{range .logs}}
-                    <div class="log-entry mb-0 p-0 rounded">
-                        <strong>[{{.CreatedAt}}] [{{.Level}}]</strong> {{.Message}}
+
+<div class="container py-5">
+    <h2 class="mb-4 text-center fw-bold"><i class="bi bi-terminal me-2"></i>System Logs</h2>
+    <div class="row justify-content-center">
+        <div class="col-lg-12 col-md-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0 bg-dark text-light rounded">
+                    <div class="px-3 py-4" style="min-height:500px; max-height:60vh; overflow-y:auto; font-family:monospace;">
+                        {{if .logs}}
+                            <div class="logs-list mb-0 small">
+{{range .logs}}<div class="d-flex align-items-center py-1 border-bottom border-secondary">
+    <span class="me-2 fw-bold text-secondary">[{{.CreatedAt}}]</span>
+    <span class="me-2 badge text-muted bg-opacity-75 {{if eq .Level "ERROR"}}bg-danger{{else if eq .Level "INFO"}}bg-primary{{else if eq .Level "WARN"}}bg-warning text-dark{{else}}bg-secondary{{end}}">{{.Level}}</span>
+    <span class="flex-grow-1 ms-2">{{.Message}}</span>
+</div>{{end}}
+                            </div>
+                        {{else}}
+                            <div class="text-center py-5">
+                                <i class="bi bi-journal-x display-4 text-muted"></i>
+                                <h4 class="mt-3">No logs available</h4>
+                            </div>
+                        {{end}}
                     </div>
-                {{end}}
-            {{else}}
-                <p>No logs available.</p>
-            {{end}}
+                </div>
+            </div>
         </div>
     </div>
 </div>
