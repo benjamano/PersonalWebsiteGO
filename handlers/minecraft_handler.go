@@ -6,9 +6,10 @@ import (
 	"strings"
 	"time"
 
+	"PersonalWebsiteGO/config"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/james4k/rcon"
-	"PersonalWebsiteGO/config"
 )
 
 func GetRCONClient() *rcon.RemoteConsole {
@@ -111,7 +112,7 @@ func GetPlayerList() ([]string, error) {
 	return playerList, nil
 }
 
-func CheckAndUpdatePlaytime(){
+func CheckAndUpdatePlaytime() {
 	playerList, err := GetPlayerList()
 	if err != nil {
 		config.LogMessage("ERROR", "Error getting player list: "+err.Error())
@@ -153,7 +154,7 @@ func CheckAndUpdatePlaytime(){
 	}
 }
 
-func GetPlaytime(c *fiber.Ctx) error{
+func GetPlaytime(c *fiber.Ctx) error {
 	date := c.Query("date", time.Now().Format("02-01-2006"))
 
 	rows, err := config.DB.Query("SELECT user_name, playtime FROM user_playtime WHERE date = ?", date)

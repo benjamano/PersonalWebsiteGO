@@ -2,7 +2,6 @@ package background
 
 import (
 	"PersonalWebsiteGO/handlers"
-
 	"time"
 )
 

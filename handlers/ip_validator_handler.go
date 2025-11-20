@@ -1,14 +1,15 @@
 package handlers
 
 import (
-	"fmt"
-	"net/http"
-	"encoding/json"
-	"os"
-	"github.com/gofiber/fiber/v2"
 	"PersonalWebsiteGO/config"
 	"PersonalWebsiteGO/models"
 	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func GetCurrentPublicIp(c *fiber.Ctx) error {
@@ -48,22 +49,22 @@ func ValidatePublicIpWithCloudflare(ip string) (bool, error) {
 	}
 
 	url := fmt.Sprintf("https://api.cloudflare.com/client/v4/zones/%s/dns_records?type=A", zoneID)
-	
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return false, fmt.Errorf("failed to create request: %w", err)
 	}
-	
-	req.Header.Set("Authorization", "Bearer " + apiToken)
+
+	req.Header.Set("Authorization", "Bearer "+apiToken)
 	req.Header.Set("Content-Type", "application/json")
-	
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return false, fmt.Errorf("failed to fetch DNS records: %w", err)
 	}
 	defer resp.Body.Close()
-	
+
 	var result struct {
 		Success bool `json:"success"`
 		Result  []struct {
@@ -71,22 +72,22 @@ func ValidatePublicIpWithCloudflare(ip string) (bool, error) {
 			Name    string `json:"name"`
 		} `json:"result"`
 	}
-	
+
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return false, fmt.Errorf("failed to decode cloudflare response: %w", err)
 	}
-	
+
 	if !result.Success {
 		return false, fmt.Errorf("cloudflare api request failed")
 	}
-	
+
 	for _, record := range result.Result {
 		if record.Content != ip {
 			config.LogMessage("ERROR", fmt.Sprintf("DNS record %s has IP %s, expected %s", record.Name, record.Content, ip))
 			return false, nil
 		}
 	}
-	
+
 	return true, nil
 }
 
@@ -211,6 +212,6 @@ func CheckToUpdatePublicIp() {
 
 		config.LogMessage("INFO", "Public IP updated successfully.")
 	} else {
-		// config.LogMessage("INFO", "Public IP is valid and matches Cloudflare's record.")
+		config.LogMessage("INFO", "Public IP is valid and matches Cloudflare's record.")
 	}
 }

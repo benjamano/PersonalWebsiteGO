@@ -75,6 +75,10 @@ func main() {
 		return renderWithTime(c, "projects/software", fiber.Map{"Title": "Software Development"}, "layout/base")
 	})
 
+	app.Get("/logs", middleware.AuthMiddleware, func(c *fiber.Ctx) error {
+		return renderWithTime(c, "logs/logs", fiber.Map{"Title": "Logs"}, "layout/base")
+	})
+
 	app.Get("/projects/blogs", handlers.RenderBlogsPage)
 
 	// Authentication routes

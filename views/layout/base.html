@@ -19,7 +19,6 @@
 </head>
 
 <body>
-    <!-- Bootstrap Login Modal -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -66,6 +65,9 @@
                       <li><a class="dropdown-item" href="/projects/socialmedia">Social Media</a></li>
                       <li><a class="dropdown-item" href="/projects/blogs">Project Blogs</a></li>
                     </ul>
+                </li>
+                <li class="nav-item" id="logsHeaderItem" style="display: none;">
+                    <a class="nav-link link-body-emphasis px-2" href="/logs">Logs</a>
                 </li>
             </ul>
             <div id="authButtons" style="position:absolute; right:24px; top:8px; z-index:2;">
@@ -115,7 +117,6 @@
     </footer>
 
     <script>
-        // --- Dark Mode Toggle ---
         function setDarkMode(mode) {
             if (mode === 'dark') {
                 document.body.classList.add('dark-mode');
@@ -168,13 +169,12 @@
             }
             if (toggleBtn) {
                 toggleBtn.addEventListener('click', (e) => {
-                    // Prevent double toggle if checkbox is clicked
                     if (e.target === switchInput) return;
                     setDarkMode(!document.body.classList.contains('dark-mode') ? 'dark' : 'light');
                 });
             }
         });
-        // Global authentication state and functions
+
         let authToken = localStorage.getItem('authToken');
         let loginModal;
 
@@ -194,7 +194,6 @@
                 if (headerLoginBtn) headerLoginBtn.classList.remove('d-none');
                 if (headerLogoutBtn) headerLogoutBtn.classList.add('d-none');
             } else {
-                // Check if token is valid
                 fetch('/api/auth/check', {
                     headers: {
                         'Authorization': `Bearer ${authToken}`
@@ -204,11 +203,13 @@
                     if (response.ok) {
                         if (headerLoginBtn) headerLoginBtn.classList.add('d-none');
                         if (headerLogoutBtn) headerLogoutBtn.classList.remove('d-none');
+                        $("#logsHeaderItem").show();
                     } else {
                         localStorage.removeItem('authToken');
                         authToken = null;
                         if (headerLoginBtn) headerLoginBtn.classList.remove('d-none');
                         if (headerLogoutBtn) headerLogoutBtn.classList.add('d-none');
+                        $("#logsHeaderItem").hide();
                     }
                 })
                 .catch(error => {
@@ -240,19 +241,15 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Store the token
                     authToken = data.token;
                     localStorage.setItem('authToken', authToken);
                     
-                    // Close modal
                     if (loginModal) loginModal.hide();
                     
-                    // Clear form and error
                     document.getElementById('loginForm').reset();
                     errorDiv.classList.add('d-none');
                     errorDiv.textContent = '';
                     
-                    // Update UI and reload page
                     window.location.reload();
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
