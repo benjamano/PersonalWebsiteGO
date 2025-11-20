@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"PersonalWebsiteGO/config"
 	"fmt"
 	"os"
 	"strings"
 	"time"
-	"PersonalWebsiteGO/config"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/james4k/rcon"
 )
@@ -134,21 +135,25 @@ func CheckAndUpdatePlaytime() {
 				continue
 			}
 			rows.Close()
+			playtimeMinutes += 10
+			_, err = config.DB.Exec("UPDATE user_playtime SET playtime = ?, last_login = ? WHERE id = ?",
+				playtimeMinutes, time.Now(), id)
+			if err != nil {
+				config.LogMessage("ERROR", "Database update error: "+err.Error())
+				continue
+			}
+			config.LogMessage("INFO", fmt.Sprintf("Updated playtime for player %s: %d minutes", player, playtimeMinutes))
 		} else {
-			playtimeMinutes = 0
 			rows.Close()
+			playtimeMinutes = 10
+			_, err = config.DB.Exec("INSERT INTO user_playtime (user_name, playtime, date, last_login) VALUES (?, ?, ?, ?)",
+				player, playtimeMinutes, time.Now().Format("02-01-2006"), time.Now())
+			if err != nil {
+				config.LogMessage("ERROR", "Database insert error: "+err.Error())
+				continue
+			}
+			config.LogMessage("INFO", fmt.Sprintf("Inserted new playtime for player %s: %d minutes", player, playtimeMinutes))
 		}
-
-		playtimeMinutes += 10
-		_, err = config.DB.Exec("INSERT INTO user_playtime (user_name, playtime, date, last_login, id) VALUES (?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET playtime = ?, last_login = ?",
-			player, playtimeMinutes, time.Now().Format("02-01-2006"), time.Now(), id, playtimeMinutes, time.Now())
-
-		if err != nil {
-			config.LogMessage("ERROR", "Database update error: "+err.Error())
-			continue
-		}
-
-		config.LogMessage("INFO", fmt.Sprintf("Updated playtime for player %s: %d minutes", player, playtimeMinutes))
 	}
 }
 
