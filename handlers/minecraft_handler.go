@@ -104,11 +104,29 @@ func GetPlayerList() ([]string, error) {
 		return nil, fmt.Errorf("failed to read RCON response: %w", err)
 	}
 
-	listResponse = strings.Split(listResponse, ": ")[1]
+	parts := strings.SplitN(listResponse, ": ", 2)
+	if len(parts) < 2 {
+		return []string{}, nil
+	}
 
-	playerList := strings.Split(strings.TrimSpace(listResponse), "\n")
+	afterColon := strings.TrimSpace(parts[1])
+	if afterColon == "" {
+		return []string{}, nil
+	}
 
-	return playerList, nil
+	rawPlayers := strings.FieldsFunc(afterColon, func(r rune) bool {
+		return r == '\n' || r == ',' 
+	})
+
+	players := make([]string, 0, len(rawPlayers))
+	for _, p := range rawPlayers {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			players = append(players, p)
+		}
+	}
+
+	return players, nil
 }
 
 func CheckAndUpdatePlaytime() {
