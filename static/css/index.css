@@ -1,0 +1,155 @@
+.portfolio {
+    /* font-family: 'DM Sans', sans-serif; */
+    padding: 3rem 2rem;
+    max-width: 60vw;
+    margin: 0 auto;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.hero-name {
+    /* font-family: 'DM Serif Display', serif; */
+    font-size: 56px;
+    font-weight: 400;
+    letter-spacing: -1px;
+    line-height: 1.1;
+}
+
+.hero-name em {
+    font-style: italic;
+    opacity: 0.5;
+}
+
+.hero-sub {
+    font-size: 15px;
+    color: #888;
+    margin-top: 0.5rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.divider {
+    width: 40px;
+    height: 1px;
+    background: #ddd;
+    margin: 1.5rem auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #e5e5e5;
+    aspect-ratio: 3/4;
+    background: #f5f5f5;
+    transition: transform 0.25s ease;
+    display: block;
+    text-decoration: none;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.card-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.4s ease;
+}
+
+.card:hover .card-img {
+    transform: scale(1.04);
+}
+
+.card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.1) 55%, transparent 100%);
+}
+
+.card-body {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.25rem;
+}
+
+.card-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 6px;
+}
+
+.card-title {
+    /* font-family: 'DM Serif Display', serif; */
+    font-size: 22px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.card-wide {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #e5e5e5;
+    height: 200px;
+    background: #f5f5f5;
+    transition: transform 0.25s ease;
+    display: block;
+    text-decoration: none;
+}
+
+.card-wide:hover {
+    transform: translateY(-4px);
+}
+
+.card-wide .card-img {
+    transition: transform 0.4s ease;
+}
+
+.card-wide:hover .card-img {
+    transform: scale(1.03);
+}
+
+.card-wide .card-body {
+    padding: 1.5rem 2rem;
+}
+
+.card-wide .card-title {
+    font-size: 28px;
+}
+
+.arrow {
+    position: absolute;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+}
