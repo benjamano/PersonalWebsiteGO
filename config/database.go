@@ -53,8 +53,21 @@ func InitDatabase() error {
 		level TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
-	`
 
+	CREATE TABLE IF NOT EXISTS service_status (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		service_name TEXT NOT NULL,
+		status TEXT NOT NULL,
+		checked_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
+
+	CREATE TABLE IF NOT EXISTS service_latency (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		service_name TEXT NOT NULL,
+		latency INTEGER NOT NULL,
+		checked_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
+	`
 	_, err = DB.Exec(createTableSQL)
 	if err != nil {
 		return err
@@ -64,7 +77,6 @@ func InitDatabase() error {
 	return nil
 }
 
-// CloseDatabase closes the database connection
 func CloseDatabase() {
 	if DB != nil {
 		DB.Close()

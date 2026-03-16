@@ -30,12 +30,10 @@ func renderWithTime(c *fiber.Ctx, view string, data fiber.Map, layout string) er
 }
 
 func main() {
-	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Println("Warning: .env file not found, using system environment variables")
 	}
 
-	// Initialize database
 	if err := config.InitDatabase(); err != nil {
 		log.Fatal("Failed to initialize database:", err)
 	}
@@ -79,14 +77,12 @@ func main() {
 
 	app.Get("/projects/blogs", handlers.RenderBlogsPage)
 
-	// Authentication routes
 	app.Post("/api/auth/login", handlers.Login)
 	app.Get("/api/auth/check", middleware.AuthMiddleware, handlers.CheckAuth)
 
 	app.Get("/api/blogs", handlers.GetAllBlogs)
 	app.Get("/api/blogs/:id", handlers.GetBlogByID)
 
-	// Protected API routes (require authentication)
 	app.Post("/api/blogs", middleware.AuthMiddleware, handlers.CreateBlog)
 	app.Put("/api/blogs/:id", middleware.AuthMiddleware, handlers.UpdateBlog)
 	app.Delete("/api/blogs/:id", middleware.AuthMiddleware, handlers.DeleteBlog)
@@ -94,7 +90,9 @@ func main() {
 	app.Get("/api/minecraft/status", handlers.Status)
 	app.Get("/api/minecraft/playerlist", handlers.PlayerList)
 	app.Get("/api/minecraft/sendmessage", handlers.SendMessage)
-	app.Get("/api/minecraft/getplaytime", handlers.GetPlaytime)
+	app.Get("/api/minecraft/playtime", handlers.GetPlaytime)
+
+	app.Get("/other/servicestatus", handlers.RenderServerStatusPage)
 
 	app.Get("/api/proxmox/vmstatus", handlers.AllVMStatus)
 	app.Get("/api/proxmox/getvmstatus", handlers.GetVMStatus)

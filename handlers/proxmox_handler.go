@@ -202,7 +202,6 @@ func GetVMDetailedStatus(c *fiber.Ctx) error {
 		for _, vm := range vms {
 			if fmt.Sprintf("%v", vm["vmid"]) == vmId {
 				return c.JSON(fiber.Map{"status": vm})
-				break
 			}
 		}
 	}
