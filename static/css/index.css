@@ -5,6 +5,127 @@
     margin: 0 auto;
 }
 
+@media (max-width: 900px) {
+    .portfolio {
+        max-width: 90vw;
+        padding: 2rem 1.25rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .portfolio {
+        max-width: 100%;
+        padding: 1.5rem 1rem;
+    }
+
+    .hero {
+        margin-bottom: 1.75rem;
+    }
+
+    .hero-name {
+        font-size: 36px;
+    }
+
+    .hero-sub {
+        font-size: 13px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .card-title {
+        font-size: 18px;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .hero {
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-name {
+        font-size: 26px;
+        letter-spacing: -0.5px;
+    }
+
+    .hero-sub {
+        font-size: 11px;
+        letter-spacing: 0.05em;
+    }
+
+    .divider {
+        margin: 1rem auto;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .card {
+        aspect-ratio: 16/9;
+    }
+
+    .card-title {
+        font-size: 16px;
+    }
+
+    .card-tag {
+        font-size: 9px;
+        margin-bottom: 4px;
+    }
+
+    .card-body {
+        padding: 0.75rem;
+    }
+
+    .arrow {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+        bottom: 0.6rem;
+        right: 0.6rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .hero-name {
+        font-size: 22px;
+    }
+
+    .grid {
+        gap: 8px;
+    }
+}
+
+/* Disable card hover lift on touch screens */
+@media (hover: none) {
+
+    .card:hover,
+    .card-wide:hover {
+        transform: none;
+    }
+
+    .card:hover .card-img,
+    .card-wide:hover .card-img {
+        transform: none;
+    }
+}
+
 .hero {
     text-align: center;
     margin-bottom: 3.5rem;
@@ -152,4 +273,19 @@
     justify-content: center;
     color: rgba(255, 255, 255, 0.8);
     font-size: 14px;
+}
+
+/* --- Dark Mode --- */
+.dark-mode .card,
+.dark-mode .card-wide {
+    background: #23272b;
+    border-color: #444;
+}
+
+.dark-mode .divider {
+    background: #555;
+}
+
+.dark-mode .hero-sub {
+    color: #b0b0b0;
 }

@@ -53,36 +53,55 @@
         </div>
     </div>
 
-    <nav class="navbar navbar-expand pt-0 border-bottom fs-5 position-relative" style="min-height:56px;">
+    <nav class="navbar navbar-expand-md pt-0 border-bottom fs-5 position-relative" style="min-height:56px;">
         <div class="container-fluid px-3">
-            <ul class="navbar-nav mx-auto" style="position:relative; z-index:1;">
-                <li class="nav-item">
-                    <a class="nav-link link-body-emphasis px-2" href="/">Home</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Projects
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/projects/websites">Stuff I've done</a></li>
-                        <li><a class="dropdown-item" href="/projects/lasertag">Laser Tag Arena</a></li>
-                        <li><a class="dropdown-item" href="/projects/socialmedia">Social Media</a></li>
-                        <li><a class="dropdown-item" href="/projects/blogs">Project Blogs</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Other Stuff
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/other/minecraft">Minecraft Server</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item" id="logsHeaderItem" style="display: none;">
-                    <a class="nav-link link-body-emphasis px-2" href="/logs">Logs</a>
-                </li>
-            </ul>
-            <div id="authButtons" style="position:absolute; right:24px; top:8px; z-index:2;">
+            <a class="navbar-brand d-md-none" href="/">Ben Mercer</a>
+            <div class="d-flex align-items-center gap-2 ms-auto d-md-none">
+                <div id="authButtonsMobile">
+                    <button type="button" id="headerLoginBtnMobile" class="btn btn-sm btn-outline-primary"
+                        data-bs-toggle="modal" data-bs-target="#loginModal" aria-label="Login">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </button>
+                    <button type="button" id="headerLogoutBtnMobile" class="btn btn-sm btn-outline-danger d-none"
+                        onclick="handleLogout()" aria-label="Logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </div>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="fas fa-bars"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto" style="position:relative; z-index:1;">
+                    <li class="nav-item">
+                        <a class="nav-link link-body-emphasis px-2" href="/">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Projects
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/projects/websites">Stuff I've done</a></li>
+                            <li><a class="dropdown-item" href="/projects/lasertag">Laser Tag Arena</a></li>
+                            <li><a class="dropdown-item" href="/projects/socialmedia">Social Media</a></li>
+                            <li><a class="dropdown-item" href="/projects/blogs">Project Blogs</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Other Stuff
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/other/minecraft">Minecraft Server</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item" id="logsHeaderItem" style="display: none;">
+                        <a class="nav-link link-body-emphasis px-2" href="/logs">Logs</a>
+                    </li>
+                </ul>
+            </div>
+            <div id="authButtons" class="d-none d-md-block" style="position:absolute; right:24px; top:8px; z-index:2;">
                 <button id="headerLoginBtn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
                     data-bs-target="#loginModal">
                     <i class="bi bi-box-arrow-in-right"></i> Login
@@ -98,8 +117,10 @@
         {{embed}}
     </main>
 
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-4 my-4 px-4 border-top mb-0">
-        <div class="col-md-4 d-flex flex-column align-items-start">
+    <footer
+        class="d-flex flex-column flex-md-row justify-content-between align-items-center py-4 my-4 px-4 border-top mb-0 gap-3 gap-md-0"
+        style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom))">
+        <div class="col-md-4 d-flex flex-column align-items-center align-items-md-start">
             <span class="mb-2 text-body-secondary">© 2025 Ben Mercer</span>
             <button id="darkModeToggle" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center mt-1"
                 style="min-width: 110px;">
@@ -117,8 +138,8 @@
             </span>
             {{end}}
         </div>
-        <div class="d-flex flex-column">
-            <ul class="nav col-md-4 d-flex flex-row justify-content-end list-unstyled d-flex w-100 pb-2">
+        <div class="d-flex flex-column align-items-center align-items-md-end">
+            <ul class="nav d-flex flex-row justify-content-center justify-content-md-end list-unstyled w-100 pb-2 mb-0">
                 <li class="ms-3">
                     <a class="bi bi-envelope-fill" href="mailto:benmercer76@btinternet.com" target="_blank"
                         style="font-size: 1.5rem;"></a>
@@ -211,10 +232,14 @@
         function updateAuthUI() {
             const headerLoginBtn = document.getElementById('headerLoginBtn');
             const headerLogoutBtn = document.getElementById('headerLogoutBtn');
+            const headerLoginBtnMobile = document.getElementById('headerLoginBtnMobile');
+            const headerLogoutBtnMobile = document.getElementById('headerLogoutBtnMobile');
 
             if (!authToken) {
                 if (headerLoginBtn) headerLoginBtn.classList.remove('d-none');
                 if (headerLogoutBtn) headerLogoutBtn.classList.add('d-none');
+                if (headerLoginBtnMobile) headerLoginBtnMobile.classList.remove('d-none');
+                if (headerLogoutBtnMobile) headerLogoutBtnMobile.classList.add('d-none');
             } else {
                 fetch('/api/auth/check', {
                     headers: {
@@ -225,12 +250,16 @@
                         if (response.ok) {
                             if (headerLoginBtn) headerLoginBtn.classList.add('d-none');
                             if (headerLogoutBtn) headerLogoutBtn.classList.remove('d-none');
+                            if (headerLoginBtnMobile) headerLoginBtnMobile.classList.add('d-none');
+                            if (headerLogoutBtnMobile) headerLogoutBtnMobile.classList.remove('d-none');
                             $("#logsHeaderItem").show();
                         } else {
                             localStorage.removeItem('authToken');
                             authToken = null;
                             if (headerLoginBtn) headerLoginBtn.classList.remove('d-none');
                             if (headerLogoutBtn) headerLogoutBtn.classList.add('d-none');
+                            if (headerLoginBtnMobile) headerLoginBtnMobile.classList.remove('d-none');
+                            if (headerLogoutBtnMobile) headerLogoutBtnMobile.classList.add('d-none');
                             $("#logsHeaderItem").hide();
                         }
                     })
@@ -240,6 +269,8 @@
                         authToken = null;
                         if (headerLoginBtn) headerLoginBtn.classList.remove('d-none');
                         if (headerLogoutBtn) headerLogoutBtn.classList.add('d-none');
+                        if (headerLoginBtnMobile) headerLoginBtnMobile.classList.remove('d-none');
+                        if (headerLogoutBtnMobile) headerLogoutBtnMobile.classList.add('d-none');
                     });
             }
         }

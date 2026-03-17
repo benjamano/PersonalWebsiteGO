@@ -7,6 +7,11 @@
 
 * {
     font-family: 'Monocraft', monospace;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
 }
 
 /* --- Dark Mode Styles --- */
@@ -56,6 +61,8 @@ body.dark-mode {
 .dark-mode .form-label,
 .dark-mode .form-control,
 .dark-mode .nav-link,
+.dark-mode .navbar-brand,
+.dark-mode .navbar-toggler,
 .dark-mode .navbar-nav .nav-link {
     color: #e0e0e0 !important;
 }
@@ -227,4 +234,124 @@ hr {
     font-size: 14px;
     font-weight: bold;
     margin: 0 20px;
+}
+
+/* ─── Navbar — mobile / portrait ─── */
+@media (max-width: 767px) {
+    .navbar {
+        padding-top: 0.4rem;
+        padding-bottom: 0.4rem;
+    }
+
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    /* Collapsed menu separator from the bar */
+    #navbarContent {
+        border-top: 1px solid #e5e5e5;
+        margin-top: 0.4rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+
+    .dark-mode #navbarContent {
+        border-top-color: #3a3a3a;
+    }
+
+    /* Bigger tap targets for nav links */
+    .navbar-nav .nav-link {
+        font-size: 1rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .dark-mode .navbar-nav .nav-link {
+        border-bottom-color: #2e2e2e;
+    }
+
+    .navbar-nav .nav-item:last-child>.nav-link {
+        border-bottom: none;
+    }
+
+    /* Indented inline dropdown on mobile */
+    .navbar-nav .dropdown-menu {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        margin: 0;
+        padding-left: 1.25rem;
+        background: #f8f9fa;
+    }
+
+    .dark-mode .navbar-nav .dropdown-menu {
+        background: #1c1f22;
+    }
+
+    .navbar-nav .dropdown-item {
+        font-size: 0.9rem;
+        padding: 0.55rem 1rem;
+        border-bottom: 1px solid #ebebeb;
+    }
+
+    .dark-mode .navbar-nav .dropdown-item {
+        border-bottom-color: #2a2a2a;
+    }
+
+    .navbar-nav .dropdown-item:last-child {
+        border-bottom: none;
+    }
+}
+
+/* ─── Footer — mobile / portrait ─── */
+@media (max-width: 767px) {
+    footer {
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+        text-align: center;
+        gap: 1.25rem !important;
+    }
+
+    /* Make each footer section stretch full width */
+    footer>div {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Render time text is long — shrink it a touch */
+    footer .text-body-secondary {
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    /* Social icon row — bigger tap targets */
+    footer .nav li a {
+        padding: 0.25rem 0.5rem;
+        display: inline-block;
+    }
+}
+
+@media (max-width: 480px) {
+    footer {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    footer .text-body-secondary {
+        font-size: 0.72rem;
+    }
+}
+
+/* ─── Touch devices — remove hover effects ─── */
+@media (hover: none) {
+    .hover-raise:hover {
+        transform: none;
+        filter: brightness(1);
+    }
+
+    .container-fluid:hover .hover-raise {
+        filter: brightness(1);
+    }
 }
