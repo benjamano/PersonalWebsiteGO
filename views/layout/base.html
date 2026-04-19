@@ -77,7 +77,7 @@
                     <li class="nav-item">
                         <a class="nav-link link-body-emphasis px-2" href="/">Home</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown d-none">
                         <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Projects
                         </a>
@@ -88,7 +88,7 @@
                             <li><a class="dropdown-item" href="/projects/blogs">Project Blogs</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown d-none">
                         <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Other Stuff
                         </a>
@@ -117,11 +117,10 @@
         {{embed}}
     </main>
 
-    <footer
-        class="d-flex flex-column flex-md-row justify-content-between align-items-center py-4 my-4 px-4 border-top mb-0 gap-3 gap-md-0"
+    <footer class="d-flex flex-column flex-md-row justify-content-between align-items-center py-4 my-4 px-4 border-top mb-0 gap-3 gap-md-0"
         style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom))">
         <div class="col-md-4 d-flex flex-column align-items-center align-items-md-start">
-            <span class="mb-2 text-body-secondary">© 2025 Ben Mercer</span>
+            <span class="mb-2 text-body-secondary">© <span id="currentYear">2026</span> Ben Mercer</span>
             <button id="darkModeToggle" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center mt-1"
                 style="min-width: 110px;">
                 <span id="darkModeIcon" class="me-2"><i class="bi"></i></span>
@@ -138,28 +137,37 @@
             </span>
             {{end}}
         </div>
-        <div class="d-flex flex-column align-items-center align-items-md-end">
-            <ul class="nav d-flex flex-row justify-content-center justify-content-md-end list-unstyled w-100 pb-2 mb-0">
-                <li class="ms-3">
-                    <a class="bi bi-envelope-fill" href="mailto:benmercer76@btinternet.com" target="_blank"
-                        style="font-size: 1.5rem;"></a>
-                </li>
-                <li class="ms-3">
-                    <a class="bi bi-github" href="https://github.com/benjamano" target="_blank"
-                        style="font-size: 1.5rem;"></a>
-                </li>
-                <li class="ms-3">
-                    <a class="bi bi-linkedin" href="https://www.linkedin.com/in/ben-mercer-7aa128267/" target="_blank"
-                        style="font-size: 1.5rem;"></a>
-                </li>
-            </ul>
-            <img src="https://github.com/benjamano/PersonalWebsiteGO/actions/workflows/deploy.yml/badge.svg"
-                role="button" onclick="window.open('https://github.com/benjamano/PersonalWebsiteGO', '_blank')"
-                alt="Workflow status badge" loading="lazy" height="20">
+        <div class="col-md-4">
+            <div class="d-flex flex-column align-items-center align-items-md-end">
+                <ul class="nav d-flex flex-row justify-content-center justify-content-md-end list-unstyled w-100 pb-2 mb-0">
+                    <li class="ms-3">
+                        <a class="bi bi-envelope-fill" href="mailto:benmercer76@btinternet.com" target="_blank"
+                            style="font-size: 1.5rem;"></a>
+                    </li>
+                    <li class="ms-3">
+                        <a class="bi bi-github" href="https://github.com/benjamano" target="_blank"
+                            style="font-size: 1.5rem;"></a>
+                    </li>
+                    <li class="ms-3">
+                        <a class="bi bi-linkedin" href="https://www.linkedin.com/in/ben-mercer-7aa128267/" target="_blank"
+                            style="font-size: 1.5rem;"></a>
+                    </li>
+                </ul>
+                <img src="https://github.com/benjamano/PersonalWebsiteGO/actions/workflows/deploy.yml/badge.svg"
+                    role="button" onclick="window.open('https://github.com/benjamano/PersonalWebsiteGO', '_blank')"
+                    alt="Workflow status badge" loading="lazy" height="20">
+            </div>
         </div>
     </footer>
 
     <script>
+        function updateYear() {
+            const yearSpan = document.getElementById('currentYear');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        }
+
         function setDarkMode(mode) {
             if (mode === 'dark') {
                 document.body.classList.add('dark-mode');
@@ -201,6 +209,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            updateYear();   
             applyInitialTheme();
             updateDarkModeToggle();
             const switchInput = document.getElementById('darkModeSwitch');
